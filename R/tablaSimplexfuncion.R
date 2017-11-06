@@ -57,8 +57,8 @@ tablaSimplex <- function(lp, wb){
     #Metemos la var de entrada en la columna izquierda
     XLConnect::writeWorksheet(wb, var_base[pivote$Columna], "Sheet1", startRow =  inicio + nrow(lp) + 4 + pivote$Fila, startCol = 1, header = FALSE)
     #Actualizamos la columna cB con los coeficientes de la base de la iteracion anterior
-    rhs_new <- XLConnect::readNamedRegion(wb, paste0("rhs", iteracion - 1), header = FALSE)
-    XLConnect::writeNamedRegion(wb, data = rhs_new, name = paste0("rhs", iteracion), header = FALSE)
+    rhs_new <- XLConnect::readNamedRegion(wb, paste0("base_coefs", iteracion - 1), header = FALSE)
+    XLConnect::writeNamedRegion(wb, data = rhs_new, name = paste0("base_coefs", iteracion), header = FALSE)
     #Actualizamos la columna cB con el coeficiente de la variable que ha entrado
     XLConnect::writeWorksheet(wb, get.mat(lp, 0, pivote$Columna), "Sheet1", startRow = inicio + nrow(lp) + 4 + pivote$Fila, startCol = 2, header = FALSE)
     indices <- indices  + 4
