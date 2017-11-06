@@ -9,10 +9,10 @@
 #'
 #' @examples
 #' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
-pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos){
+pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_rhs){
 
   if(sum(sign(cost_reducidos) == 1) <= 0){
-    warning("No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)")
+    message("No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)")
     return(NULL)
 
   } else {
@@ -20,13 +20,13 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos){
   }
 
   if(sum(sign(mat_restr[,col_pivote]) > 0) <= 0){
-    warning("No existen positivos en la variable. Se termina el algoritmo (No hay optimo finito)")
+    message("No existen positivos en la variable. Se termina el algoritmo (No hay optimo finito)")
     return(NULL)
 
   }
-
-  positivos_pivote <- mat_restr[sign(mat_restr[,col_pivote]) == 1,col_pivote]
-  row_pivote <- which(mat_restr[,col_pivote] == min(positivos_pivote))
+  cociente_pivote <- mat_rhs/mat_restr[,col_pivote]
+  positivos_pivote <- cociente_pivote[cociente_pivote >= 0]
+  row_pivote <- which(cociente_pivote == min(positivos_pivote))
 
   #Ahora deberemos elaborar las fórmulas para la tabla de Excel
   var_pivote <- mat_restr_celdas[row_pivote, col_pivote]

@@ -12,5 +12,6 @@ LazyData: true
 Imports: rJava,
     XLConnect,
     readr,
-    stringr
+    stringr,
+    XLConnectJars
 RoxygenNote: 6.0.1
