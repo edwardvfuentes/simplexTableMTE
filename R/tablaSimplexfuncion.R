@@ -29,7 +29,7 @@ tablaSimplex <- function(lp, wb){
   while(iteracion <= 4){
     costes <- XLConnect::readNamedRegion(wb, stringr::str_c("costes_redux", iteracion), header = FALSE)
     m_restr <- XLConnect::readNamedRegion(wb, stringr::str_c("restricciones", iteracion), header = FALSE)
-    celda_restr <- coord_celdas(wb, str_c("restricciones", iteracion))
+    celda_restr <- coord_celdas(wb, stringr::str_c("restricciones", iteracion))
     rhs_num <- XLConnect::readNamedRegion(wb, stringr::str_c("rhs", iteracion), header = FALSE)
     pivote <- pivot_calc(m_restr, celda_restr, costes, rhs_num)
     base_vars <- XLConnect::readWorksheet(wb, "Sheet1", startRow = inicio + 1, endRow = inicio + nrow(lp), startCol = 1, endCol = 1, header = FALSE)
