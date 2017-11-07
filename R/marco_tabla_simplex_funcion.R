@@ -13,7 +13,6 @@ texteitor <- function(lp, wb, iteracion){
 
   reiteros <- (-4 - nrow(lp)) + ((4 + nrow(lp)) * iteracion)
 
-  #La primera matriz
   matriz_restr_start <- matrix(0, nrow = nrow(lp), ncol = ncol(lp))
   for(j in 1:ncol(lp)){
     for(i in 1:nrow(lp)){
@@ -23,6 +22,27 @@ texteitor <- function(lp, wb, iteracion){
 
   #Definir matriz de lados derechos
   matriz_rhs <- get.rhs(lp)
+
+  #Definir los coeficientes cB
+
+  vectorino <- diag(nrow(lp))
+  index_cb <- numeric(nrow(lp))
+
+  for(j in 1:nrow(vectorino)){
+    for(i in 1:ncol(matriz_restr_start)){
+      if(sum(matrix(vectorino[,j]) == matriz_restr_start[,i]) == nrow(matriz_restr_start))
+        print((1:ncol(matriz_restr_start))[i])
+        index_cb[j] <- (1:ncol(matriz_restr_start))[i]
+    }
+  }
+
+  matriz_cb <- matrix(numeric(nrow(lp)))
+
+  for(i in 1:ncol(matriz_cb)){
+    matriz_cb[i,] <- get.mat(lp, 0, index_cb[i])
+    }
+
+
 
   #Definir el vector de coeficientes de la matriz objetivo
   coef_objetivo <- matrix(numeric(ncol(lp)), nrow = 1)
@@ -41,7 +61,7 @@ texteitor <- function(lp, wb, iteracion){
   cBxB <- t(matrix(cBxB))
 
   #El indicador zj-cj y los coeficientes de la base
-  zjx <- matrix(c("zj-cj", "",x_text[c(-1:-diff(dim(lp)),-length(x_text))]))
+  zjx <- matrix(c("zj-cj", "", x_text[as.numeric(index_cb)]))
 
   #Escribir los marcos textuales de las tablas
   XLConnect::writeWorksheet(wb, data = x_text, sheet = "Sheet1", startRow = 1 + reiteros, startCol = 3, header = FALSE)
@@ -55,7 +75,7 @@ texteitor <- function(lp, wb, iteracion){
   regiones_origen <- c(2, 2, 4, 4, 4) - (4 + nrow(lp)) + ((4 + nrow(lp)) * iteracion)
   regiones_origen_letra <- c("Sheet1!C", coord_rhs_obj, "Sheet1!C", coord_rhs_obj, "Sheet1!B")
   regiones_raw <- c("costes_redux", "objetivo", "restricciones", "rhs", "base_coefs")
-  listado_tablas <- list(-coef_objetivo, 0, matriz_restr_start, matriz_rhs, matrix(numeric(3)))
+  listado_tablas <- list(-coef_objetivo, 0, matriz_restr_start, matriz_rhs, matriz_cb)
 
 
   for(j in 1:length(regiones_raw)){
