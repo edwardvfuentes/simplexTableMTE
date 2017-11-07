@@ -31,14 +31,13 @@ texteitor <- function(lp, wb, iteracion){
   for(j in 1:nrow(vectorino)){
     for(i in 1:ncol(matriz_restr_start)){
       if(sum(matrix(vectorino[,j]) == matriz_restr_start[,i]) == nrow(matriz_restr_start))
-        print((1:ncol(matriz_restr_start))[i])
         index_cb[j] <- (1:ncol(matriz_restr_start))[i]
     }
   }
 
   matriz_cb <- matrix(numeric(nrow(lp)))
 
-  for(i in 1:ncol(matriz_cb)){
+  for(i in 1:nrow(matriz_cb)){
     matriz_cb[i,] <- get.mat(lp, 0, index_cb[i])
     }
 
