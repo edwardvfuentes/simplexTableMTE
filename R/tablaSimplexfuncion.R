@@ -13,7 +13,8 @@ tablaSimplex <- function(lp, wb){
 
   iteracion <- 1
 
-  M_cual <- texteitor(lp, wb, iteracion)
+  index_cb_inicial <- texteitor(lp, wb, iteracion)
+  coef_vector_obj <- coef_obj_gen(lp)
 
   nombres_regiones <- XLConnect::getDefinedNames(wb)[!stringr::str_detect(XLConnect::getDefinedNames(wb), "base")]
 
@@ -35,13 +36,14 @@ tablaSimplex <- function(lp, wb){
     rownames(rhs_num) <- unlist(base_vars)
     m_cb <-XLConnect::readNamedRegion(wb, paste0("base_coefs", iteracion), header = FALSE)
     M_grand <- XLConnect::readNamedRegion(wb, stringr::str_c("M_grande", iteracion), header = FALSE)
+    M_cual <- which(m_cb > max(coef_vector_obj[-index_cb_inicial]) & m_cb > 0)
 
     pivote <- pivot_calc(m_restr, celda_restr, costes, M_grand, rhs_num, cual_M = M_cual)
      if(!is.null(pivote)){
       #Coloreamos la celda del pivote
       XLConnect::setCellStyle(wb, sheet = "Sheet1", row = inicio + pivote$Fila, col = 2 + pivote$Columna, cellstyle = estilocelda)
       iteracion <- iteracion + 1
-      M_cual <- texteitor(lp, wb, iteracion)
+      index_cb_inicial <- texteitor(lp, wb, iteracion)
       for(x in indices){
         nombres_regiones <- XLConnect::getDefinedNames(wb)[!stringr::str_detect(getDefinedNames(wb), "base")]
         celda <- coord_celdas(wb, nombres_regiones[x])
@@ -64,11 +66,12 @@ tablaSimplex <- function(lp, wb){
     XLConnect::writeWorksheet(wb, var_base[pivote$Columna], "Sheet1", startRow =  inicio + nrow(lp) + 5 + pivote$Fila, startCol = 1, header = FALSE)
 
     #Actualizamos la columna cB con los coeficientes de la base de la iteracion anterior
-    cb_new <- XLConnect::readNamedRegion(wb, paste0("base_coefs", iteracion - 1), header = FALSE)
-    XLConnect::writeNamedRegion(wb, data = cb_new, name = paste0("base_coefs", iteracion), header = FALSE)
+    cb_prev <- XLConnect::readNamedRegion(wb, paste0("base_coefs", iteracion - 1), header = FALSE)
+    XLConnect::writeNamedRegion(wb, data = cb_prev, name = paste0("base_coefs", iteracion), header = FALSE)
 
     #Actualizamos la columna cB con el coeficiente de la variable que ha entrado
     XLConnect::writeWorksheet(wb, get.mat(lp, 0, pivote$Columna), "Sheet1", startRow = inicio + nrow(lp) + 5 + pivote$Fila, startCol = 2, header = FALSE)
+
     indices <- indices  + 6
     inicio <- inicio + nrow(lp) + 5
   }

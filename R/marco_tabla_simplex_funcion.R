@@ -49,12 +49,18 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
   #Definir el vector de las M grandes. Tenemos que identificar las artificiales
   #diciendole a R cuales de los coeficientes, que sean mayores que 0, son
   #mayores que el mayor de los coeficientes de la funcion objetivo original.
+
+  #Mal mal. matriz_cb en este entorno siempre va a contener los Cienes de la funcion objetivo. Hay que leer la columna cB en la iteracion de ahora
+
+
+
+  #¿Siguen habiendo artificiales dentro de la base?
+
+
   cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
 
   matriz_M <- matrix(apply(matriz_restr_start[cual_mejor,], 2, sum), nrow = 1)
-  #matriz_M <- matrix(append(matriz_M, sum(matriz_rhs[cual_mejor])), nrow = 1)
 
-  #¿Siguen habiendo artificiales dentro de la base?
 
 
   #Las variables xj y z_obj
@@ -99,6 +105,13 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
   }
   regiones_origen <- regiones_origen + (5 + nrow(lp))
 
-  return(cual_mejor)
+  if(iteracion >= 2){
+    matriz_cb <- XLConnect::readNamedRegion(problem80wb, name = paste0("base_coefs", iteracion),header = FALSE)
+
+    cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
+
+  }
+
+  return(index_cb)
 
 }

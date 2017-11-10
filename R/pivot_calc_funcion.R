@@ -12,7 +12,6 @@
 pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs, cual_M){
 
   #Criterio de entrada(seleccion de columna para el pivote)
-
   if(length(cual_M) > 0){
     cols <- 1:length(mat_M)
     exclusion <- -tail(cols, length(cual_M))
