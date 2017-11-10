@@ -106,7 +106,7 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
   regiones_origen <- regiones_origen + (5 + nrow(lp))
 
   if(iteracion >= 2){
-    matriz_cb <- XLConnect::readNamedRegion(problem80wb, name = paste0("base_coefs", iteracion),header = FALSE)
+    matriz_cb <- XLConnect::readNamedRegion(wb, name = paste0("base_coefs", iteracion),header = FALSE)
 
     cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
 
