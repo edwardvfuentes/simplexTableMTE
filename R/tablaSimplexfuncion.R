@@ -43,7 +43,7 @@ tablaSimplex <- function(lp, wb){
       iteracion <- iteracion + 1
       M_cual <- texteitor(lp, wb, iteracion)
       for(x in indices){
-        nombres_regiones <- XLConnect::getDefinedNames(wb)[!str_detect(getDefinedNames(wb), "base")]
+        nombres_regiones <- XLConnect::getDefinedNames(wb)[!stringr::str_detect(getDefinedNames(wb), "base")]
         celda <- coord_celdas(wb, nombres_regiones[x])
         formula <- formula_celdas(celda, pivote)
         coord <- XLConnect::getReferenceCoordinatesForName(wb, nombres_regiones[x + 6])
