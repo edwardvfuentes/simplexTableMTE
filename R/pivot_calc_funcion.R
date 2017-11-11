@@ -9,12 +9,16 @@
 #'
 #' @examples
 #' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
-pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs, cual_M){
+pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs, cual_M, workbook, linear){
+
 
   #Criterio de entrada(seleccion de columna para el pivote)
   if(length(cual_M) > 0){
+    prim_base <- XLConnect::readNamedRegion(workbook, "base_coefs1", header = FALSE)
+    fobjetivo <- coef_obj_gen(linear)
+    excluyentes <- sum(unlist(prim_base) == fobjetivo)
     cols <- 1:length(mat_M)
-    exclusion <- -tail(cols, length(cual_M))
+    exclusion <- -tail(cols, excluyentes)
     if(sum(mat_M[exclusion] > 0.000001) == 0){
       message("No existen positivos entre las M grandes. Se termina el algoritmo (No hay solucion factible)")
       return(NULL)

@@ -38,7 +38,7 @@ tablaSimplex <- function(lp, wb){
     M_grand <- XLConnect::readNamedRegion(wb, stringr::str_c("M_grande", iteracion), header = FALSE)
     M_cual <- which(m_cb > max(coef_vector_obj[-index_cb_inicial]) & m_cb > 0)
 
-    pivote <- pivot_calc(m_restr, celda_restr, costes, M_grand, rhs_num, cual_M = M_cual)
+    pivote <- pivot_calc(m_restr, celda_restr, costes, M_grand, rhs_num, cual_M = M_cual, wb, lp)
      if(!is.null(pivote)){
       #Coloreamos la celda del pivote
       XLConnect::setCellStyle(wb, sheet = "Sheet1", row = inicio + pivote$Fila, col = 2 + pivote$Columna, cellstyle = estilocelda)
