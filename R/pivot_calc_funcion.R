@@ -17,7 +17,7 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
     fobjetivo <- coef_obj_gen(linear)
     prim_base <- unlist(prim_base)
     coincid <- match(fobjetivo, prim_base[prim_base > 0])
-    if(sum(is.na(coincid))r != length(coincid)){
+    if(sum(is.na(coincid)) != length(coincid)){
       excluidos <- which(!is.na(coincid))
       if(sum(mat_M[-excluidos] > 0.000001) == 0){
         if(sum(sign(cost_reducidos) == 1) <= 0){
