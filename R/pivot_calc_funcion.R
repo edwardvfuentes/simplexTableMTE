@@ -13,28 +13,37 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
 
 
   #Criterio de entrada(seleccion de columna para el pivote)
-  if(length(cual_M) > 0){
     prim_base <- XLConnect::readNamedRegion(workbook, "base_coefs1", header = FALSE)
     fobjetivo <- coef_obj_gen(linear)
-    excluyentes <- sum(unlist(prim_base) == fobjetivo)
-    cols <- 1:length(mat_M)
-    exclusion <- -tail(cols, excluyentes)
-    if(sum(mat_M[exclusion] > 0.000001) == 0){
-      message("No existen positivos entre las M grandes. Se termina el algoritmo (No hay solucion factible)")
-      return(NULL)
+    prim_base <- unlist(prim_base)
+    coincid <- match(fobjetivo, prim_base[prim_base > 0])
+    if(sum(is.na(coincid))r != length(coincid)){
+      excluidos <- which(!is.na(coincid))
+      if(sum(mat_M[-excluidos] > 0.000001) == 0){
+        if(sum(sign(cost_reducidos) == 1) <= 0){
+          message("No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)")
+          return(NULL)
 
-    } else {
-      col_pivote <- which(mat_M == max(mat_M[exclusion]))
-    }
+        } else {
+          col_pivote <- which(cost_reducidos == max(cost_reducidos))
 
-  }else{
+        }
 
-    if(sum(sign(cost_reducidos) == 1) <= 0){
-      message("No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)")
-      return(NULL)
+      } else {
+        col_pivote <- which(mat_M == max(mat_M[-excluidos]))
+      }
 
-    } else {
-      col_pivote <- which(cost_reducidos == max(cost_reducidos))
+    }else{
+
+      if(sum(sign(cost_reducidos) == 1) <= 0){
+        message("No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)")
+        return(NULL)
+
+      }  else{
+        col_pivote <- which(cost_reducidos == max(cost_reducidos))
+
+      }
+
     }
 
 
@@ -42,9 +51,7 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
     if(sum(sign(mat_restr[,col_pivote]) > 0) <= 0){
       message("No existen positivos en la variable. Se termina el algoritmo (No hay optimo finito)")
       return(NULL)
-
     }
-  }
 
 
   cociente_pivote <- mat_rhs/mat_restr[,col_pivote]
