@@ -1,4 +1,4 @@
-#' Title Transformador de problemas primales a duales
+#' Transformador de problemas primales a duales
 #'
 #' @param lp Un objeto lpPtrExtr completo, resuelto o no.
 #'
@@ -6,6 +6,7 @@
 #' @export
 #'
 #' @examples
+#'library(lpSolveAPI)
 #'problem_80 <- make.lp(3,4)
 #'
 #'set.objfn(problem_80, c(-8, -1, 0, 7))

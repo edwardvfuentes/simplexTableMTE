@@ -4,7 +4,7 @@
 \alias{texteitor}
 \title{Title Generacion de marcos con texto y regiones para el problema lineal planteado}
 \usage{
-texteitor(lp, wb, iteracion)
+texteitor(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp))
 }
 \arguments{
 \item{lp}{Objeto tipo lpExtPtr proveniente del paquete lpSolveAPI y que debe estar resuelto con la funcion solve antes de ser introducido}
