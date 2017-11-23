@@ -1,13 +1,55 @@
-#' Title Generador de soluciones de problemas de programacion lineal con simplex en tablas de formato .xlsx
+#'Generador de soluciones de problemas de programacion lineal con simplex en
+#'tablas de formato .xlsx
 #'
-#' @param lp Objeto tipo lpExtPtr proveniente del paquete lpSolveAPI y que debe estar resuelto con la funcion solve antes de ser introducido
-#' @param wb Donde se coloca un objeto Workbook de XLConnect
+#'@param lp Objeto tipo lpExtPtr proveniente del paquete lpSolveAPI y que debe
+#'  estar resuelto con la funcion solve antes de ser introducido
+#'@param wb Donde se coloca un objeto Workbook de XLConnect
 #'
-#' @return Rellena un archivo .xlsx, previamente creado con loadWorkbook, con la resolucion de un problema de Simplex.
-#' @export
+#'@return Rellena un archivo .xlsx, previamente creado con loadWorkbook, con la
+#'  resolucion de un problema de Simplex.
+#'@export
+#'
+#'@details Esta función requiere de dos objetos: Uno lpExtPtr que esté resuelto
+#'  con la funcion solve, y otro de tipo workbook. Esto implica que esta función
+#'  se apoya sobre los paquetes lpSolveAPI y XLConnect para que funcione como se
+#'  espera.
+#'
+#'  Nótese que el problema de programación lineal introducido debe estar
+#'  necesariamente en forma estándar, pues, de momento, no contiene un argumento
+#'  que permita elegir la base inicial con la que comenzar la tabla de Simplex.
+#'  En el apartado ejemplos se resuelve un problema sencillo en forma estándar
+#'  con variables de holgura y soluciones enteras.
+#'
+#'  Finalmente, el .xlsx devuelto contendrá una fila de Ms para el supuesto de
+#'  que se utilice el método de la M grande. La función detecta de forma
+#'  automática cuales de las variables son artificiales, comparando los
+#'  coeficientes de las variables de la base inicial que sean mayores que cero,
+#'  con aquellos coeficientes de las variables iniciales mayores que cero
+#'  (suponiendo que, evidentemente, las artificiales tengan un coeficiente
+#'  significativamente grande).
 #'
 #' @examples
-#' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
+#'#Cargamos un problema de programación lineal y lo resolvemos
+#'library(lpSolveAPI)
+#'library(XLConnect)
+#'
+#'problem_79_es <- make.lp(3,5)
+#'set.objfn(problem_79_es, c(-2,-5, 0, 0, 0))
+#'set.rhs(problem_79_es, c(7,3,5))
+#'set.constr.type(problem_79_es, c(rep("=", 3)))
+#'set.row(problem_79_es,1, c(-6, -2, 1, 0, 0))
+#'set.row(problem_79_es,2, c(-8, -4, 0, 1, 0))
+#'set.row(problem_79_es,3, c(1, 4, 0, 0, 1))
+#'
+#'solve(problem_79_es)
+#'
+#'#Procedemos a generar el objeto workbook y a utilizar la función. Como resultado,
+#'#debería aparecer un objeto .xlsx en la carpeta del directorio de trabajo con el nombre
+#'#indicado (en este caso, "Miproblema79.xlsx").
+#'
+#'problem79 <- loadWorkbook("Miproblema79.xlsx", create = TRUE)
+#'tablaSimplex(problem_79_es, wb = problem79)
+#'saveWorkbook(problem79)
 tablaSimplex <- function(lp, wb){
   XLConnect::createSheet(wb, "Sheet1")
 
