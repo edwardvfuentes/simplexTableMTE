@@ -54,16 +54,15 @@ invert_prob <- function(lp){
 
   for(i in 1:nrow(lp)){
     if(get.constr.type(lp)[i] == "=" ){
-      set.bounds(new_lp, lower = Inf, upper = Inf, columns = i)
+      set.bounds(new_lp, lower = -Inf, upper = Inf, columns = i)
     }
     if(get.constr.type(lp)[i] == "<=" ){
-      set.bounds(new_lp, lower = Inf, upper = 0, columns = i)
+      set.bounds(new_lp, lower = -Inf, upper = 0, columns = i)
     }
     if(get.constr.type(lp)[i] == ">=" ){
       set.bounds(new_lp, lower = 0, upper = Inf, columns = i)
     }
   }
-
 
   return(new_lp)
 }
