@@ -1,4 +1,4 @@
-#' Title Generacion de formulas de Simplex dentro del archivo .xlsx
+#' Generacion de formulas de Simplex dentro del archivo .xlsx
 #'
 #' @param mat_celdas Matriz con las coordenadas de la region donde se desean calcular las formulas.
 #' @param pivot_list Objeto que contiene las coordenadas del pivote, tanto numericas como textuales.

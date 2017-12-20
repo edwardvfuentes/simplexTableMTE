@@ -50,7 +50,7 @@
 #'problem79 <- loadWorkbook("Miproblema79.xlsx", create = TRUE)
 #'tablaSimplex(problem_79_es, wb = problem79)
 #'saveWorkbook(problem79)
-tablaSimplex <- function(lp, wb){
+tablaSimplex <- function(lp, wb, max_iteracion = 100){
   XLConnect::createSheet(wb, "Sheet1")
 
   iteracion <- 1
@@ -69,7 +69,7 @@ tablaSimplex <- function(lp, wb){
   XLConnect::setFillForegroundColor(estilocelda, color = XLC$"COLOR.LIGHT_GREEN")
   XLConnect::setFillPattern(estilocelda, fill = XLC$"FILL.SOLID_FOREGROUND")
 
-  while(iteracion <= 4){
+  while(iteracion <= max_iteracion){
     costes <- XLConnect::readNamedRegion(wb, stringr::str_c("costes_redux", iteracion), header = FALSE)
     m_restr <- XLConnect::readNamedRegion(wb, stringr::str_c("restricciones", iteracion), header = FALSE)
     celda_restr <- coord_celdas(wb, stringr::str_c("restricciones", iteracion))

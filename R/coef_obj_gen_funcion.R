@@ -1,4 +1,4 @@
-#' Title Obtencion del vector de coeficientes del problema.
+#' Obtencion del vector de coeficientes del problema.
 #'
 #' @param lp Un objeto de programacion lineal generado conel paquete lpSolveAPI
 #'

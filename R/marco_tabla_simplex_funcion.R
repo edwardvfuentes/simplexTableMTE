@@ -1,4 +1,4 @@
-#' Title Generacion de marcos con texto y regiones para el problema lineal planteado
+#' Generacion de marcos con texto y regiones para el problema lineal planteado
 #'
 #' @param lp Objeto tipo lpExtPtr proveniente del paquete lpSolveAPI y que debe estar resuelto con la funcion solve antes de ser introducido
 #' @param wb Donde se coloca un objeto Workbook de XLConnect
@@ -12,6 +12,7 @@
 texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
 
   reiteros <- (-5 - nrow(lp)) + ((5 + nrow(lp)) * iteracion)
+  modo <- lpSolveAPI::lp.control(lp)$sense
 
   matriz_restr_start <- matrix(0, nrow = nrow(lp), ncol = ncol(lp))
   for(j in 1:ncol(lp)){
@@ -40,26 +41,14 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
     matriz_cb[i,] <- get.mat(lp, 0, index_cb[i])
     }
 
-  # #Definir el vector de coeficientes de la matriz objetivo
-  # coef_objetivo <- matrix(numeric(ncol(lp)), nrow = 1)
-  # for(i in 1:ncol(lp)){
-  #   coef_objetivo[i] <- lpSolveAPI::get.mat(lp, i = 0, j = i)
-  # }
+  if(modo == "minimize"){
+    cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
+    matriz_M <- matrix(apply(matriz_restr_start[cual_mejor,], 2, sum), nrow = 1)
+  } else {
+    cual_mejor <- which(matriz_cb < min(vector_coef_obj[-index_cb]) & matriz_cb < 0)
+    matriz_M <- matrix(apply(matriz_restr_start[cual_mejor,], 2, sum), nrow = 1)
+  }
 
-  #Definir el vector de las M grandes. Tenemos que identificar las artificiales
-  #diciendole a R cuales de los coeficientes, que sean mayores que 0, son
-  #mayores que el mayor de los coeficientes de la funcion objetivo original.
-
-  #Mal mal. matriz_cb en este entorno siempre va a contener los Cienes de la funcion objetivo. Hay que leer la columna cB en la iteracion de ahora
-
-
-
-  #¿Siguen habiendo artificiales dentro de la base?
-
-
-  cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
-
-  matriz_M <- matrix(apply(matriz_restr_start[cual_mejor,], 2, sum), nrow = 1)
 
 
 

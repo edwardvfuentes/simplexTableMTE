@@ -1,4 +1,4 @@
-#' Title Calculo del pivote de una iteracion de Simplex
+#' Calculo del pivote de una iteracion de Simplex
 #'
 #' @param mat_restr Matriz numerica de restricciones del problema Simplex a resolver
 #' @param mat_restr_celdas Matriz de coordenadas de la matriz de restricciones del archivo .xlsx
@@ -9,19 +9,38 @@
 #'
 #' @examples
 #' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
-pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs, cual_M, workbook, linear){
+pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs, cual_M, workbook, lp){
 
 
-  #Criterio de entrada(seleccion de columna para el pivote)
+  #Criterio de entrada (seleccion de columna para el pivote)
     prim_base <- XLConnect::readNamedRegion(workbook, "base_coefs1", header = FALSE)
-    fobjetivo <- coef_obj_gen(linear)
     prim_base <- unlist(prim_base)
-    coincid <- match(fobjetivo, prim_base[prim_base > 0])
-    if(sum(is.na(coincid)) != length(coincid)){
-      excluidos <- which(!is.na(coincid))
-      if(sum(mat_M[-excluidos] > 0.000001) == 0){
-        if(sum(sign(cost_reducidos) == 1) <= 0){
-          message("No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)")
+    fobjetivo <- coef_obj_gen(lp)
+    modo <- lpSolveAPI::lp.control(lp)$sense
+    if(modo == "minimize"){
+      coincid <- match(fobjetivo, prim_base[prim_base > 0])
+      if (sum(is.na(coincid)) != length(coincid)) {
+        excluidos <- which(!is.na(coincid))
+        if (sum(mat_M[-excluidos] > 0.000001) == 0) {
+          if (sum(sign(cost_reducidos) == 1) <= 0) {
+            message(
+              "No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)"
+            )
+            return(NULL)
+
+          } else {
+            col_pivote <- which(cost_reducidos == max(cost_reducidos))
+          }
+
+        } else {
+          col_pivote <- which(mat_M == max(mat_M[-excluidos]))
+        }
+
+      } else {
+        if (sum(sign(cost_reducidos) == 1) <= 0) {
+          message(
+            "No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)"
+          )
           return(NULL)
 
         } else {
@@ -29,26 +48,47 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
 
         }
 
-      } else {
-        col_pivote <- which(mat_M == max(mat_M[-excluidos]))
       }
 
-    }else{
+    } else {
+      coincid <- match(fobjetivo, prim_base[prim_base < 0])
+      if (sum(is.na(coincid)) != length(coincid)) {
+        excluidos <- which(!is.na(coincid))
+        if (sum(mat_M[-excluidos] > 0.000001) == 0) {
+          if (sum(sign(cost_reducidos) == -1) <= 0) {
+            message(
+              "No existen negativos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)"
+            )
+            return(NULL)
 
-      if(sum(sign(cost_reducidos) == 1) <= 0){
-        message("No existen positivos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)")
-        return(NULL)
+          } else {
+            col_pivote <- which(cost_reducidos == min(cost_reducidos))
+          }
 
-      }  else{
-        col_pivote <- which(cost_reducidos == max(cost_reducidos))
+        } else {
+          col_pivote <- which(mat_M == max(mat_M[-excluidos]))
+        }
+
+      } else {
+        if (sum(sign(cost_reducidos) == -1) <= 0) {
+          message(
+            "No existen negativos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)"
+          )
+          return(NULL)
+
+        } else {
+          col_pivote <- which(cost_reducidos == min(cost_reducidos))
+
+        }
 
       }
 
     }
 
 
+
     #Criterio de salida
-    if(sum(sign(mat_restr[,col_pivote]) > 0) <= 0){
+    if (sum(sign(mat_restr[, col_pivote]) > 0) <= 0) {
       message("No existen positivos en la variable. Se termina el algoritmo (No hay optimo finito)")
       return(NULL)
     }
@@ -57,7 +97,7 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
   cociente_pivote <- mat_rhs/mat_restr[,col_pivote]
   positivos_pivote <- cociente_pivote[cociente_pivote >= 0]
 
-  #Determinacion del row
+  #Determinacion de la fila
   letras_min <- rownames(cociente_pivote)[which(cociente_pivote == min(cociente_pivote[cociente_pivote > 0]))]
   row_pivote <- which(rownames(cociente_pivote) == sort(letras_min)[1])
 
