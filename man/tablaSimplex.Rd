@@ -5,7 +5,7 @@
 \title{Generador de soluciones de problemas de programacion lineal con simplex en
 tablas de formato .xlsx}
 \usage{
-tablaSimplex(lp, wb)
+tablaSimplex(lp, wb, max_iteracion = 100)
 }
 \arguments{
 \item{lp}{Objeto tipo lpExtPtr proveniente del paquete lpSolveAPI y que debe

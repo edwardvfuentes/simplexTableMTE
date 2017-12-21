@@ -10,7 +10,7 @@ invert_prob(lp)
 \item{lp}{Un objeto lpPtrExtr completo, resuelto o no.}
 }
 \value{
-La version dual del objeto introducido.
+La version dual del problema introducido.
 }
 \description{
 Transformador de problemas primales a duales

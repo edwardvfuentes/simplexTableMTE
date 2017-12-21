@@ -2,7 +2,7 @@
 % Please edit documentation in R/marco_tabla_simplex_funcion.R
 \name{texteitor}
 \alias{texteitor}
-\title{Title Generacion de marcos con texto y regiones para el problema lineal planteado}
+\title{Generacion de marcos con texto y regiones para el problema lineal planteado}
 \usage{
 texteitor(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp))
 }
@@ -17,7 +17,7 @@ texteitor(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp))
 Establece las regiones de cada una de las partes del problema de programacion lineal y los marcos indicativos textuales.
 }
 \description{
-Title Generacion de marcos con texto y regiones para el problema lineal planteado
+Generacion de marcos con texto y regiones para el problema lineal planteado
 }
 \examples{
 print("Introduciremos ejemplos posteriormente, disculpa las molestias.")

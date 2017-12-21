@@ -2,7 +2,7 @@
 % Please edit documentation in R/coef_obj_gen_funcion.R
 \name{coef_obj_gen}
 \alias{coef_obj_gen}
-\title{Title Obtencion del vector de coeficientes del problema.}
+\title{Obtencion del vector de coeficientes del problema.}
 \usage{
 coef_obj_gen(lp)
 }
@@ -13,7 +13,7 @@ coef_obj_gen(lp)
 Devuelve un vector de tantos elementos como columnas tenga el problema
 }
 \description{
-Title Obtencion del vector de coeficientes del problema.
+Obtencion del vector de coeficientes del problema.
 }
 \examples{
 print("Ya meteremos algo!")

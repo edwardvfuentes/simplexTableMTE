@@ -2,10 +2,10 @@
 % Please edit documentation in R/pivot_calc_funcion.R
 \name{pivot_calc}
 \alias{pivot_calc}
-\title{Title Calculo del pivote de una iteracion de Simplex}
+\title{Calculo del pivote de una iteracion de Simplex}
 \usage{
 pivot_calc(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs, cual_M,
-  workbook, linear)
+  workbook, lp)
 }
 \arguments{
 \item{mat_restr}{Matriz numerica de restricciones del problema Simplex a resolver}
@@ -18,7 +18,7 @@ pivot_calc(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs, cual_M,
 Una lista con tres elementos: Fila, Columna y Coordenada
 }
 \description{
-Title Calculo del pivote de una iteracion de Simplex
+Calculo del pivote de una iteracion de Simplex
 }
 \examples{
 print("Introduciremos ejemplos posteriormente, disculpa las molestias.")

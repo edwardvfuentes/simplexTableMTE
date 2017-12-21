@@ -2,7 +2,7 @@
 % Please edit documentation in R/formulaCeldasScript.R
 \name{formula_celdas}
 \alias{formula_celdas}
-\title{Title Generacion de formulas de Simplex dentro del archivo .xlsx}
+\title{Generacion de formulas de Simplex dentro del archivo .xlsx}
 \usage{
 formula_celdas(mat_celdas, pivot_list)
 }
@@ -15,7 +15,7 @@ formula_celdas(mat_celdas, pivot_list)
 Devuelve la formulas pertinentes para la region, siguiendo la regla del cuadrado y teniendo en cuenta aquella celda donde se encuentre el pivote.
 }
 \description{
-Title Generacion de formulas de Simplex dentro del archivo .xlsx
+Generacion de formulas de Simplex dentro del archivo .xlsx
 }
 \examples{
 print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
