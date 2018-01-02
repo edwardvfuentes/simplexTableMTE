@@ -62,11 +62,11 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
             return(NULL)
 
           } else {
-            col_pivote <- which(cost_reducidos == min(cost_reducidos))
+            col_pivote <- which(cost_reducidos == min(cost_reducidos))[1]
           }
 
         } else {
-          col_pivote <- which(mat_M == max(mat_M[-excluidos]))
+          col_pivote <- which(mat_M == max(mat_M[-excluidos]))[1]
         }
 
       } else {
@@ -77,7 +77,7 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
           return(NULL)
 
         } else {
-          col_pivote <- which(cost_reducidos == min(cost_reducidos))
+          col_pivote <- which(cost_reducidos == min(cost_reducidos))[1]
 
         }
 
@@ -95,10 +95,10 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
 
 
   cociente_pivote <- mat_rhs/mat_restr[,col_pivote]
-  positivos_pivote <- cociente_pivote[cociente_pivote >= 0]
+
 
   #Determinacion de la fila
-  letras_min <- rownames(cociente_pivote)[which(cociente_pivote == min(cociente_pivote[cociente_pivote > 0]))]
+  letras_min <- rownames(cociente_pivote)[which(cociente_pivote == min(cociente_pivote[cociente_pivote > 0], na.rm = T))]
   row_pivote <- which(rownames(cociente_pivote) == sort(letras_min)[1])
 
 
