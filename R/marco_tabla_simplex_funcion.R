@@ -10,6 +10,10 @@
 #' @examples
 #' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
 texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
+  LETRAS <- LETTERS
+  for(i in seq(length(LETTERS))){
+    LETRAS <- c(LETRAS, paste0(LETTERS[i], LETTERS))
+  }
 
   reiteros <- (-5 - nrow(lp)) + ((5 + nrow(lp)) * iteracion)
   modo <- lpSolveAPI::lp.control(lp)$sense
@@ -75,7 +79,7 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
   XLConnect::writeWorksheet(wb, data = zjx, sheet = "Sheet1", startRow = 3 + reiteros, startCol = 1, header = FALSE)
 
   #Definir las coordenadas de columnas para la región rhs y la objetivo
-  coord_rhs_obj <- paste0("Sheet1!", LETTERS[2 + ncol(lp) + 1])
+  coord_rhs_obj <- paste0("Sheet1!", LETRAS[2 + ncol(lp) + 1])
 
   #Crear las regiones para cada tabla
   regiones_origen <- c(2, 3, 2, 3, 5, 5, 5) - (5 + nrow(lp)) + ((5 + nrow(lp)) * iteracion)

@@ -55,6 +55,12 @@ tablaSimplex <- function(lp, wb, max_iteracion = 100){
 
   iteracion <- 1
 
+  #Generación de varios rangos de letras para las columnas de Excel (no llega a más de 700 variables)
+  LETRAS <- LETTERS
+  for(i in seq(length(LETTERS))){
+    LETRAS <- c(LETRAS, paste0(LETTERS[i], LETTERS))
+  }
+
   index_cb_inicial <- texteitor(lp, wb, iteracion)
   coef_vector_obj <- coef_obj_gen(lp)
 
@@ -82,6 +88,7 @@ tablaSimplex <- function(lp, wb, max_iteracion = 100){
 
     pivote <- pivot_calc(m_restr, celda_restr, costes, M_grand, rhs_num, cual_M = M_cual, wb, lp)
      if(!is.null(pivote)){
+       message(paste("Procesando iteracion", iteracion, "..."))
       #Coloreamos la celda del pivote
       XLConnect::setCellStyle(wb, sheet = "Sheet1", row = inicio + pivote$Fila, col = 2 + pivote$Columna, cellstyle = estilocelda)
       iteracion <- iteracion + 1

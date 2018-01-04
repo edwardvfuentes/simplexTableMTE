@@ -39,8 +39,10 @@ formula_celdas <- function(mat_celdas, pivot_list){
   if(nrow(mat_formulas) > 1 & ncol(mat_formulas) == 1){
     rows_change <- 1:nrow(mat_celdas)
     rows_change <- rows_change[-pivot_row]
-    split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
-    split_piv <- stringr::str_split(stringr::str_replace_all(pivot_var, "\\$", ""), "", n = 2,simplify = T)
+    split_mat <- cbind(stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::UPPER)),
+                        stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::DGT)))
+    #split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
+    split_piv <- stringr::str_split(stringr::str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
     mat_formulas[pivot_row,] <- paste0(mat_celdas[pivot_row,], cel_same)
     for(i in rows_change){
       mat_formulas[i,] <- paste0(mat_celdas[i,],
@@ -52,7 +54,9 @@ formula_celdas <- function(mat_celdas, pivot_list){
 
   #Para costes reducidos
   if(ncol(mat_formulas) > 1 & nrow(mat_formulas) == 1){
-    split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
+    split_mat <- cbind(stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::UPPER)),
+                       stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::DGT)))
+    #split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
     split_piv <- stringr::str_split(stringr::str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
     for(i in 1:length(mat_formulas)){
       mat_formulas[,i] <- paste0(mat_celdas[,i], "-(", paste0(split_mat[i, 1], split_piv[2]), "*",paste0(split_piv[1], split_mat[i, 2]),")/", pivot_var )
@@ -61,7 +65,9 @@ formula_celdas <- function(mat_celdas, pivot_list){
 
   #Para el valor de la funcion objetivo
   if(ncol(mat_formulas) == nrow(mat_formulas)){
-    split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
+    split_mat <- cbind(stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::UPPER)),
+                       stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::DGT)))
+    #split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
     split_piv <- stringr::str_split(stringr::str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
     mat_formulas <- paste0(mat_celdas, "-(", paste0(split_mat[1], split_piv[2]), "*",paste0(split_piv[1], split_mat[2]),")/", pivot_var )
   }

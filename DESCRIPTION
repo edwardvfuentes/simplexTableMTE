@@ -1,7 +1,7 @@
 Package: simplexTableMTE
 Type: Package
 Title: Generador de soluciones de problemas de Programacion Lineal en archivos .xlsx
-Version: 0.3.2
+Version: 0.4.0
 Author: Edward Joseph Velo Fuentes
 Maintainer: Edward Joseph Velo Fuentes <vattico@gmail.com>
 Description: La finalidad de este paquete es automatizar las resoluciones de problemas de programaci?n lineal con Simplex,
@@ -13,5 +13,6 @@ Imports: rJava,
     XLConnect,
     readr,
     stringr,
-    XLConnectJars
+    XLConnectJars,
+    rebus
 RoxygenNote: 6.0.1
