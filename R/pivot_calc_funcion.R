@@ -63,7 +63,7 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
       if (sum(is.na(coincid)) != length(coincid)) {
         excluidos <- which(!is.na(coincid))
         if (sum(mat_M[-excluidos] > 0.000001) == 0) {
-          if (sum(sign(cost_reducidos) == -1) <= 0) {
+          if (all(cost_reducidos >= -10e-14)) {
             message(
               "No existen negativos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)"
             )
@@ -78,7 +78,7 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
         }
 
       } else {
-        if (sum(sign(cost_reducidos) == -1) <= 0) {
+        if (all(cost_reducidos >= -10e-14)) {
           message(
             "No existen negativos entre los costes reducidos. Se termina el algoritmo (Optimo finito alcanzado)"
           )
