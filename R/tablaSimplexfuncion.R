@@ -57,7 +57,8 @@ tablaSimplex <- function(lp, wb, max_iteracion = 100){
 
   #Generación de varios rangos de letras para las columnas de Excel (no llega a más de 700 variables)
   LETRAS <- LETTERS
-  for(i in seq(length(LETTERS))){
+
+  for(i in seq(LETTERS)){
     LETRAS <- c(LETRAS, paste0(LETTERS[i], LETTERS))
   }
 
@@ -79,7 +80,7 @@ tablaSimplex <- function(lp, wb, max_iteracion = 100){
     costes <- XLConnect::readNamedRegion(wb, stringr::str_c("costes_redux", iteracion), header = FALSE)
     m_restr <- XLConnect::readNamedRegion(wb, stringr::str_c("restricciones", iteracion), header = FALSE)
     celda_restr <- coord_celdas(wb, stringr::str_c("restricciones", iteracion))
-    rhs_num <- XLConnect::readNamedRegion(wb, stringr::str_c("rhs", iteracion), header = FALSE)
+    rhs_num <- XLConnect::readNamedRegion(wb, stringr::str_c("righthand", iteracion), header = FALSE)
     base_vars <- XLConnect::readWorksheet(wb, "Sheet1", startRow = inicio + 1, endRow = inicio + nrow(lp), startCol = 1, endCol = 1, header = FALSE)
     rownames(rhs_num) <- unlist(base_vars)
     m_cb <-XLConnect::readNamedRegion(wb, paste0("base_coefs", iteracion), header = FALSE)

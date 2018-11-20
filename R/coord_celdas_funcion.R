@@ -1,4 +1,4 @@
-#' Title Obtencion de coordenadas de celdas en un .xlsx
+#' Obtencion de coordenadas de celdas en una hoja de cálculo
 #'
 #' @param wb Donde se coloca un objeto Workbook de XLConnect
 #' @param regionName Nombre de la region del archivo .xlsx de la que se desea extraer las coordenadas

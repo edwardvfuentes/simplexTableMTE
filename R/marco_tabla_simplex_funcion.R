@@ -84,7 +84,7 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
   #Crear las regiones para cada tabla
   regiones_origen <- c(2, 3, 2, 3, 5, 5, 5) - (5 + nrow(lp)) + ((5 + nrow(lp)) * iteracion)
   regiones_origen_letra <- c("Sheet1!C","Sheet1!C", coord_rhs_obj, coord_rhs_obj, "Sheet1!C", coord_rhs_obj, "Sheet1!B")
-  regiones_raw <- c("M_grande","costes_redux", "M_objetivo", "objetivo", "restricciones", "rhs", "base_coefs")
+  regiones_raw <- c("M_grande","costes_redux", "M_objetivo", "objetivo", "restricciones", "righthand", "base_coefs")
   listado_tablas <- list(matriz_M, -vector_coef_obj, 0,0, matriz_restr_start, matriz_rhs, matriz_cb)
 
 
