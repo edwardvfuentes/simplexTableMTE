@@ -2,7 +2,7 @@
 % Please edit documentation in R/coord_celdas_funcion.R
 \name{coord_celdas}
 \alias{coord_celdas}
-\title{Title Obtencion de coordenadas de celdas en un .xlsx}
+\title{Obtencion de coordenadas de celdas en una hoja de cálculo}
 \usage{
 coord_celdas(wb, regionName)
 }
@@ -15,7 +15,7 @@ coord_celdas(wb, regionName)
 Devuelve las coordenadas de todas las celdas que componen la region solicitada en el archivo .xlsx.
 }
 \description{
-Title Obtencion de coordenadas de celdas en un .xlsx
+Obtencion de coordenadas de celdas en una hoja de cálculo
 }
 \examples{
 print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
