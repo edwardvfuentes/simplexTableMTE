@@ -4,8 +4,12 @@
 #' @param wb Donde se coloca un objeto Workbook de XLConnect
 #' @param iteracion Numero de la tabla que se va a generar dentro del archivo .xlsx
 #'
+#' @import lpSolveAPI
+#' @import XLConnect
+#' @import purrr
+#' @import dplyr
+#'
 #' @return Establece las regiones de cada una de las partes del problema de programacion lineal y los marcos indicativos textuales.
-#' @export
 #'
 #' @examples
 #' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
@@ -16,67 +20,72 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
   }
 
   reiteros <- (-5 - nrow(lp)) + ((5 + nrow(lp)) * iteracion)
-  modo <- lpSolveAPI::lp.control(lp)$sense
+  modo <- lp.control(lp)$sense
 
-  matriz_restr_start <- matrix(0, nrow = nrow(lp), ncol = ncol(lp))
-  for(j in 1:ncol(lp)){
-    for(i in 1:nrow(lp)){
-      matriz_restr_start[i,j] <- lpSolveAPI::get.mat(lp, i = i, j = j)
-    }
-  }
+  #Calculamos la matriz de restricciones iniciales y los coeficientes cB
+  matriz_restr_start <- matriz_restr_calc(lp)
+  index_cb <- index_cb_calc(lp, matriz_restr_start)
 
   #Definir matriz de lados derechos
   matriz_rhs <- get.rhs(lp)
 
-  #Definir los coeficientes cB
-  vectorino <- diag(nrow(lp))
-  index_cb <- numeric(nrow(lp))
-
-  for(j in 1:nrow(vectorino)){
-    for(i in 1:ncol(matriz_restr_start)){
-      if(sum(matrix(vectorino[,j]) == matriz_restr_start[,i]) == nrow(matriz_restr_start))
-        index_cb[j] <- (1:ncol(matriz_restr_start))[i]
-    }
-  }
-
+  #Crear una matriz cb para uso de la M grande
   matriz_cb <- matrix(numeric(nrow(lp)))
 
   for(i in 1:nrow(matriz_cb)){
     matriz_cb[i,] <- get.mat(lp, 0, index_cb[i])
-    }
+  }
 
-  if(modo == "minimize"){
-    cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
-    matriz_M <- matrix(apply(matriz_restr_start[cual_mejor,], 2, sum), nrow = 1)
+  #Determining which coefficients are better suited for the task
+  if (modo == "minimize") {
+    cual_mejor <-
+      which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
+    matriz_M <-
+      matrix(apply(matriz_restr_start[cual_mejor, ], 2, sum), nrow = 1)
+
   } else {
-    cual_mejor <- which(matriz_cb < min(vector_coef_obj[-index_cb]) & matriz_cb < 0)
-    matriz_M <- matrix(apply(matriz_restr_start[cual_mejor,], 2, sum), nrow = 1)
+    cual_mejor <-
+      which(matriz_cb < min(vector_coef_obj[-index_cb]) & matriz_cb < 0)
+    matriz_M <-
+      matrix(apply(matriz_restr_start[cual_mejor, ], 2, sum), nrow = 1)
+
   }
 
 
-
-
   #Las variables xj y z_obj
-  x_text <- rep("x", ncol(lp))
-  x_text <- paste0(x_text, 1:ncol(lp))
-  x_text <- c(x_text, "z_obj")
-  x_text <- t(matrix(x_text))
+  x_text <- rep("x", ncol(lp)) %>%
+    paste0(1:ncol(lp)) %>%
+    c("z_obj") %>%
+    matrix() %>%
+    t()
 
   #cB y xB
-  cBxB <- c("cB", rep("", ncol(lp)),"xB")
-  cBxB <- t(matrix(cBxB))
+  cBxB <- c("cB", rep("", ncol(lp)),"xB") %>%
+    matrix() %>%
+    t()
 
-  #La big M
+  #The big M
   M <- "M"
 
   #El indicador zj-cj y los coeficientes de la base
   zjx <- matrix(c("zj-cj", "", x_text[as.numeric(index_cb)]))
 
-  #Escribir los marcos textuales de las tablas
-  XLConnect::writeWorksheet(wb, data = x_text, sheet = "Sheet1", startRow = 1 + reiteros, startCol = 3, header = FALSE)
-  XLConnect::writeWorksheet(wb, data = cBxB, sheet = "Sheet1", startRow = 4 + reiteros, startCol = 2, header = FALSE)
-  XLConnect::writeWorksheet(wb, data = M, sheet = "Sheet1", startRow = 2 + reiteros, startCol = 1, header = FALSE)
-  XLConnect::writeWorksheet(wb, data = zjx, sheet = "Sheet1", startRow = 3 + reiteros, startCol = 1, header = FALSE)
+  #Reunimos textos y parámetros en una lista
+  frame_text_list <- list(
+    list(data = x_text, startRow = 1, startCol = 3),
+    list(data = cBxB, startRow = 4, startCol = 2),
+    list(data = M, startRow = 2, startCol = 1),
+    list(data = zjx, startRow = 3, startCol = 1)
+  )
+
+  #Escribir los marcos textuales de las tablas dentro del workbook
+  for(i in frame_text_list){
+    writeWorksheet(wb,
+                   data = i$data, sheet = "Sheet1",
+                   startRow = i$startRow + reiteros,
+                   startCol = i$startCol,
+                   header = FALSE)
+  }
 
   #Definir las coordenadas de columnas para la región rhs y la objetivo
   coord_rhs_obj <- paste0("Sheet1!", LETRAS[2 + ncol(lp) + 1])
@@ -84,27 +93,21 @@ texteitor <- function(lp, wb, iteracion, vector_coef_obj = coef_obj_gen(lp)){
   #Crear las regiones para cada tabla
   regiones_origen <- c(2, 3, 2, 3, 5, 5, 5) - (5 + nrow(lp)) + ((5 + nrow(lp)) * iteracion)
   regiones_origen_letra <- c("Sheet1!C","Sheet1!C", coord_rhs_obj, coord_rhs_obj, "Sheet1!C", coord_rhs_obj, "Sheet1!B")
-  regiones_raw <- c("M_grande","costes_redux", "M_objetivo", "objetivo", "restricciones", "righthand", "base_coefs")
-  listado_tablas <- list(matriz_M, -vector_coef_obj, 0,0, matriz_restr_start, matriz_rhs, matriz_cb)
-
-
-  for(j in 1:length(regiones_raw)){
-    XLConnect::createName(wb, paste0(regiones_raw[j], iteracion), paste0(regiones_origen_letra[j], regiones_origen[j]))
-  }
-
+  regiones_raw <- c("M_grande", "costes_redux", "M_objetivo", "objetivo", "restricciones", "righthand", "base_coefs")
+  listado_tablas <- list(matriz_M, -vector_coef_obj, 0, 0, matriz_restr_start, matriz_rhs, matriz_cb)
 
   for(j in 1:length(regiones_raw)){
-    XLConnect::writeNamedRegion(wb, name = paste0(regiones_raw[j], iteracion), data = listado_tablas[j], header = FALSE)
+    createName(wb, paste0(regiones_raw[j], iteracion), paste0(regiones_origen_letra[j], regiones_origen[j]))
+    writeNamedRegion(wb, name = paste0(regiones_raw[j], iteracion), data = listado_tablas[j], header = FALSE)
   }
-  regiones_origen <- regiones_origen + (5 + nrow(lp))
+
+  #regiones_origen <- regiones_origen + (5 + nrow(lp))
 
   if(iteracion >= 2){
-    matriz_cb <- XLConnect::readNamedRegion(wb, name = paste0("base_coefs", iteracion),header = FALSE)
-
-    cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
+    matriz_cb <- readNamedRegion(wb, name = paste0("base_coefs", iteracion), header = FALSE)
+   # cual_mejor <- which(matriz_cb > max(vector_coef_obj[-index_cb]) & matriz_cb > 0)
 
   }
 
-  return(index_cb)
 
 }

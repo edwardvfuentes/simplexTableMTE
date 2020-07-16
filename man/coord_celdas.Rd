@@ -15,7 +15,7 @@ coord_celdas(wb, regionName)
 Devuelve las coordenadas de todas las celdas que componen la region solicitada en el archivo .xlsx.
 }
 \description{
-Obtencion de coordenadas de celdas en una hoja de cálculo
+Utiliza las regiones creadas dentro del workbook con las funciones writeNamedRegion del paquete XLConnect
 }
 \examples{
 print("Introduciremos ejemplos posteriormente, disculpa las molestias.")

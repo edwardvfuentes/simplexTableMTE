@@ -13,7 +13,7 @@ invert_prob(lp)
 La version dual del problema introducido.
 }
 \description{
-Transformador de problemas primales a duales
+Recibe como input un problema definido en un objeto \code{lpExtPtr} e invierte la matriz
 }
 \examples{
 library(lpSolveAPI)

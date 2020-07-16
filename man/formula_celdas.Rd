@@ -15,7 +15,7 @@ formula_celdas(mat_celdas, pivot_list)
 Devuelve la formulas pertinentes para la region, siguiendo la regla del cuadrado y teniendo en cuenta aquella celda donde se encuentre el pivote.
 }
 \description{
-Generacion de formulas de Simplex dentro del archivo .xlsx
+Rellena las celdas especificadas del archivo .xlsx con las fórmulas pertinentes para darle solución al problema Simplex presentado.
 }
 \examples{
 print("Introduciremos ejemplos posteriormente, disculpa las molestias.")

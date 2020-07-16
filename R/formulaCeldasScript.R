@@ -1,10 +1,13 @@
 #' Generacion de formulas de Simplex dentro del archivo .xlsx
 #'
+#' Rellena las celdas especificadas del archivo .xlsx con las fórmulas pertinentes para darle solución al problema Simplex presentado.
+#'
 #' @param mat_celdas Matriz con las coordenadas de la region donde se desean calcular las formulas.
 #' @param pivot_list Objeto que contiene las coordenadas del pivote, tanto numericas como textuales.
 #'
 #' @return Devuelve la formulas pertinentes para la region, siguiendo la regla del cuadrado y teniendo en cuenta aquella celda donde se encuentre el pivote.
-#' @export
+#' @import rebus
+#' @import stringr
 #'
 #' @examples
 #' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
@@ -39,10 +42,10 @@ formula_celdas <- function(mat_celdas, pivot_list){
   if(nrow(mat_formulas) > 1 & ncol(mat_formulas) == 1){
     rows_change <- 1:nrow(mat_celdas)
     rows_change <- rows_change[-pivot_row]
-    split_mat <- cbind(stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::UPPER)),
-                        stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::DGT)))
-    #split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
-    split_piv <- stringr::str_split(stringr::str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
+    split_mat <- cbind(str_extract(mat_celdas, pattern = one_or_more(UPPER)),
+                        str_extract(mat_celdas, pattern = one_or_more(DGT)))
+    #split_mat <- str_split(mat_celdas, "", n = 2, simplify = T)
+    split_piv <- str_split(str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
     mat_formulas[pivot_row,] <- paste0(mat_celdas[pivot_row,], cel_same)
     for(i in rows_change){
       mat_formulas[i,] <- paste0(mat_celdas[i,],
@@ -54,10 +57,10 @@ formula_celdas <- function(mat_celdas, pivot_list){
 
   #Para costes reducidos
   if(ncol(mat_formulas) > 1 & nrow(mat_formulas) == 1){
-    split_mat <- cbind(stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::UPPER)),
-                       stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::DGT)))
-    #split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
-    split_piv <- stringr::str_split(stringr::str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
+    split_mat <- cbind(str_extract(mat_celdas, pattern = one_or_more(UPPER)),
+                       str_extract(mat_celdas, pattern = one_or_more(DGT)))
+    #split_mat <- str_split(mat_celdas, "", n = 2, simplify = T)
+    split_piv <- str_split(str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
     for(i in 1:length(mat_formulas)){
       mat_formulas[,i] <- paste0(mat_celdas[,i], "-(", paste0(split_mat[i, 1], split_piv[2]), "*",paste0(split_piv[1], split_mat[i, 2]),")/", pivot_var )
     }
@@ -65,10 +68,10 @@ formula_celdas <- function(mat_celdas, pivot_list){
 
   #Para el valor de la funcion objetivo
   if(ncol(mat_formulas) == nrow(mat_formulas)){
-    split_mat <- cbind(stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::UPPER)),
-                       stringr::str_extract(mat_celdas, pattern = rebus::one_or_more(rebus::DGT)))
-    #split_mat <- stringr::str_split(mat_celdas, "", n = 2, simplify = T)
-    split_piv <- stringr::str_split(stringr::str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
+    split_mat <- cbind(str_extract(mat_celdas, pattern = one_or_more(UPPER)),
+                       str_extract(mat_celdas, pattern = one_or_more(DGT)))
+    #split_mat <- str_split(mat_celdas, "", n = 2, simplify = T)
+    split_piv <- str_split(str_replace_all(pivot_var, "\\$", ""), "", n = 2, simplify = T)
     mat_formulas <- paste0(mat_celdas, "-(", paste0(split_mat[1], split_piv[2]), "*",paste0(split_piv[1], split_mat[2]),")/", pivot_var )
   }
 

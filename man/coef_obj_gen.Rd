@@ -13,7 +13,7 @@ coef_obj_gen(lp)
 Devuelve un vector de tantos elementos como columnas tenga el problema
 }
 \description{
-Obtencion del vector de coeficientes del problema.
+Extrae en un vector numérico los coeficientes de un problema definido como objeto \code{lpExtrPtr}
 }
 \examples{
 print("Ya meteremos algo!")

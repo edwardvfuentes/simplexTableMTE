@@ -5,7 +5,9 @@
 #' @param cost_reducidos Vector de los costes reducidos generados en una iteracion de Simplex durante el criterio de entrada
 #'
 #' @return Una lista con tres elementos: Fila, Columna y Coordenada
-#' @export
+#' @import XLConnect
+#' @import lpSolveAPI
+#' @import stringr
 #'
 #' @examples
 #' print("Introduciremos ejemplos posteriormente, disculpa las molestias.")
@@ -13,10 +15,10 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
 
 
   #Criterio de entrada (seleccion de columna para el pivote)
-    prim_base <- XLConnect::readNamedRegion(workbook, "base_coefs1", header = FALSE)
+    prim_base <- readNamedRegion(workbook, "base_coefs1", header = FALSE)
     prim_base <- unlist(prim_base)
     fobjetivo <- coef_obj_gen(lp)
-    modo <- lpSolveAPI::lp.control(lp)$sense
+    modo <- lp.control(lp)$sense
     if(modo == "minimize"){
       #¿Cuales son los M grandes, si existen?
       coincid <- match(fobjetivo, prim_base[prim_base > 0])
@@ -120,13 +122,13 @@ pivot_calc <- function(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_r
 
 
     letras_min <- rownames(cociente_pivote_filt)[cociente_pivote_filt == min(cociente_pivote_filt, na.rm = T)]
-    row_pivote <- which(rownames(cociente_pivote) == stringr::str_sort(letras_min, numeric = T)[1])
+    row_pivote <- which(rownames(cociente_pivote) == str_sort(letras_min, numeric = T)[1])
 
 
 
   #Ahora deberemos elaborar las fórmulas para la tabla de Excel
   var_pivote <- mat_restr_celdas[row_pivote, col_pivote]
-  var_pivote <- stringr::str_split(var_pivote, "", n = 2, simplify = TRUE)
+  var_pivote <- str_split(var_pivote, "", n = 2, simplify = TRUE)
   var_pivote <- paste0("$",var_pivote[1],"$",var_pivote[2])
 
   return(list(Fila = row_pivote, Columna = col_pivote, Coordenada = var_pivote))

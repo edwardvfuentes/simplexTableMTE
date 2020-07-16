@@ -1,8 +1,11 @@
 #' Transformador de problemas primales a duales
 #'
+#' Recibe como input un problema definido en un objeto \code{lpExtPtr} e invierte la matriz
+#'
 #' @param lp Un objeto lpPtrExtr completo, resuelto o no.
 #'
 #' @return La version dual del problema introducido.
+#' @import lpSolveAPI
 #' @export
 #'
 #' @examples
@@ -22,27 +25,27 @@
 invert_prob <- function(lp){
   matriz <- matrix(numeric(prod(dim(lp))), nrow = nrow(lp), ncol = ncol(lp))
   rev_dim <- rev(dim(lp))
-  new_lp <- lpSolveAPI::make.lp(rev_dim[1], rev_dim[2])
+  new_lp <- make.lp(rev_dim[1], rev_dim[2])
   for(j in 1:ncol(lp)){
     for(i in 1:nrow(lp)){
-      matriz[i,j] <- lpSolveAPI::get.mat(lp, i = i, j = j)
+      matriz[i,j] <- get.mat(lp, i = i, j = j)
     }
   }
   matriz <- t(matriz)
 
   #Definir nuevo modelo, restricciones y demases.
-  lpSolveAPI::set.rhs(new_lp, as.numeric(coef_obj_gen(lp)))
-  lpSolveAPI::set.objfn(new_lp, get.rhs(lp))
+  set.rhs(new_lp, as.numeric(coef_obj_gen(lp)))
+  set.objfn(new_lp, get.rhs(lp))
   for(i in 1:nrow(new_lp)){
-    lpSolveAPI::set.row(new_lp, i, matriz[i,])
+    set.row(new_lp, i, matriz[i,])
   }
 
-  if(lpSolveAPI::lp.control(lp)$sense == "minimize"){
-    mod <- lpSolveAPI::lp.control(new_lp, sense = "maximize")
+  if(lp.control(lp)$sense == "minimize"){
+    mod <- lp.control(new_lp, sense = "maximize")
   }
 
-  if(lpSolveAPI::lp.control(lp)$sense == "maximize"){
-    mod <- lpSolveAPI::lp.control(new_lp, sense = "minimize")
+  if(lp.control(lp)$sense == "maximize"){
+    mod <- lp.control(new_lp, sense = "minimize")
   }
 
   #Para los problemas primales minimizadores
@@ -50,27 +53,27 @@ invert_prob <- function(lp){
 
     #Ajusta lados derechos
     for(i in 1:ncol(lp)){
-      if(lpSolveAPI::get.bounds(lp)$lower[i] == 0 & lpSolveAPI::get.bounds(lp)$upper[i] == Inf){
-        lpSolveAPI::set.constr.type(new_lp, "<=", i)
+      if(get.bounds(lp)$lower[i] == 0 & get.bounds(lp)$upper[i] == Inf){
+        set.constr.type(new_lp, "<=", i)
       }
-      if(lpSolveAPI::get.bounds(lp)$lower[i] == -Inf & lpSolveAPI::get.bounds(lp)$upper[i] == 0){
-        lpSolveAPI::set.constr.type(new_lp, ">=", i)
+      if(get.bounds(lp)$lower[i] == -Inf & get.bounds(lp)$upper[i] == 0){
+        set.constr.type(new_lp, ">=", i)
       }
-      if(lpSolveAPI::get.bounds(lp)$lower[i] == -Inf & lpSolveAPI::get.bounds(lp)$upper[i] == Inf){
-        lpSolveAPI::set.constr.type(new_lp, "=", i)
+      if(get.bounds(lp)$lower[i] == -Inf & get.bounds(lp)$upper[i] == Inf){
+        set.constr.type(new_lp, "=", i)
       }
     }
 
     #Ajusta restricciones de las variables
     for(i in 1:nrow(lp)){
-      if(lpSolveAPI::get.constr.type(lp)[i] == "=" ){
-        lpSolveAPI::set.bounds(new_lp, lower = -Inf, upper = Inf, columns = i)
+      if(get.constr.type(lp)[i] == "=" ){
+        set.bounds(new_lp, lower = -Inf, upper = Inf, columns = i)
       }
-      if(lpSolveAPI::get.constr.type(lp)[i] == "<=" ){
-        lpSolveAPI::set.bounds(new_lp, lower = -Inf, upper = 0, columns = i)
+      if(get.constr.type(lp)[i] == "<=" ){
+        set.bounds(new_lp, lower = -Inf, upper = 0, columns = i)
       }
-      if(lpSolveAPI::get.constr.type(lp)[i] == ">=" ){
-        lpSolveAPI::set.bounds(new_lp, lower = 0, upper = Inf, columns = i)
+      if(get.constr.type(lp)[i] == ">=" ){
+        set.bounds(new_lp, lower = 0, upper = Inf, columns = i)
       }
     }
 
@@ -80,27 +83,27 @@ invert_prob <- function(lp){
     #Ajusta lados derechos
     for(i in 1:ncol(lp)){
 
-      if(lpSolveAPI::get.bounds(lp)$lower[i] == 0 & lpSolveAPI::get.bounds(lp)$upper[i] == Inf){
-        lpSolveAPI::set.constr.type(new_lp, ">=", i)
+      if(get.bounds(lp)$lower[i] == 0 & get.bounds(lp)$upper[i] == Inf){
+        set.constr.type(new_lp, ">=", i)
       }
-      if(lpSolveAPI::get.bounds(lp)$lower[i] == -Inf & lpSolveAPI::get.bounds(lp)$upper[i] == 0){
-        lpSolveAPI::set.constr.type(new_lp, "<=", i)
+      if(get.bounds(lp)$lower[i] == -Inf & get.bounds(lp)$upper[i] == 0){
+        set.constr.type(new_lp, "<=", i)
       }
-      if(lpSolveAPI::get.bounds(lp)$lower[i] == -Inf & lpSolveAPI::get.bounds(lp)$upper[i] == Inf){
-        lpSolveAPI::set.constr.type(new_lp, "=", i)
+      if(get.bounds(lp)$lower[i] == -Inf & get.bounds(lp)$upper[i] == Inf){
+        set.constr.type(new_lp, "=", i)
       }
     }
 
     #Ajusta restricciones de las variables
     for(i in 1:nrow(lp)){
-      if(lpSolveAPI::get.constr.type(lp)[i] == "=" ){
-        lpSolveAPI::set.bounds(new_lp, lower = -Inf, upper = Inf, columns = i)
+      if(get.constr.type(lp)[i] == "=" ){
+        set.bounds(new_lp, lower = -Inf, upper = Inf, columns = i)
       }
-      if(lpSolveAPI::get.constr.type(lp)[i] == "<=" ){
-        lpSolveAPI::set.bounds(new_lp, lower = 0, upper = Inf, columns = i)
+      if(get.constr.type(lp)[i] == "<=" ){
+        set.bounds(new_lp, lower = 0, upper = Inf, columns = i)
       }
-      if(lpSolveAPI::get.constr.type(lp)[i] == ">=" ){
-        lpSolveAPI::set.bounds(new_lp, lower = -Inf, upper = 0, columns = i)
+      if(get.constr.type(lp)[i] == ">=" ){
+        set.bounds(new_lp, lower = -Inf, upper = 0, columns = i)
       }
     }
   }

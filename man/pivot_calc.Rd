@@ -4,8 +4,16 @@
 \alias{pivot_calc}
 \title{Calculo del pivote de una iteracion de Simplex}
 \usage{
-pivot_calc(mat_restr, mat_restr_celdas, cost_reducidos, mat_M, mat_rhs,
-  cual_M, workbook, lp)
+pivot_calc(
+  mat_restr,
+  mat_restr_celdas,
+  cost_reducidos,
+  mat_M,
+  mat_rhs,
+  cual_M,
+  workbook,
+  lp
+)
 }
 \arguments{
 \item{mat_restr}{Matriz numerica de restricciones del problema Simplex a resolver}

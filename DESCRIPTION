@@ -13,6 +13,7 @@ Imports: rJava,
     XLConnect,
     readr,
     stringr,
-    XLConnectJars,
     rebus
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
+Depends: base
+Suggests: testthat
